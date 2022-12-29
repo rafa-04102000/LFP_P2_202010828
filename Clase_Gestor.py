@@ -5,6 +5,8 @@ from Clase_AutomataDP import Automata
 from Clase_Transicion import Transicion
 import os
 from PIL import Image
+from webbrowser import open_new_tab
+# import webbrowser as wb
 
 
 class Gestor:
@@ -760,3 +762,238 @@ class Gestor:
 
     def lista_atms(self):
         return self.AutomatasDPL
+
+
+    def informacion_automatadpl(self,nombreADPL):
+        adp_buscado = None
+        for ap in self.AutomatasDPL:
+            if ap.nombre == nombreADPL:
+                adp_buscado = ap
+
+        nombre = adp_buscado.nombre
+        alfabeto = adp_buscado.alfabeto
+        simbolosP = adp_buscado.simbolosP
+        estados = adp_buscado.estados
+        estado_inicial = adp_buscado.estado_inicial
+        estado_aceptacion = adp_buscado.estado_aceptacion
+        transiciones = adp_buscado.transiciones
+
+        cadena_alfabeto = ''
+        for q in range(0,len(alfabeto)):
+            if q+1 == len(alfabeto):
+                cadena_alfabeto += f'{alfabeto[q]}'
+            else:
+                cadena_alfabeto += f'{alfabeto[q]},'
+
+        cadena_simbolosP = ''
+        for w in range(0,len(simbolosP)):
+            if w+1 == len(simbolosP):
+                cadena_simbolosP += f'{simbolosP[w]}'
+            else:
+                cadena_simbolosP += f'{simbolosP[w]},'
+
+        cadena_estados = ''
+        for e in range(0,len(estados)):
+            if e+1 == len(estados):
+                cadena_estados += f'{estados[e]}'
+            else:
+                cadena_estados += f'{estados[e]},'
+
+        cadena_estados_aceptacion = ''
+        for r in range(0,len(estado_aceptacion)):
+            if r+1 == len(estado_aceptacion):
+                cadena_estados_aceptacion += f'{estado_aceptacion[r]}'
+            else:
+                cadena_estados_aceptacion += f'{estado_aceptacion[r]},'
+
+
+        cadena = 'digraph grafo_afd { \r'
+        cadena += '     fontname="Helvetica,Arial,sans-serif"\r'
+        cadena += '     edge [fontname="Helvetica,Arial,sans-serif"]\r'
+        cadena += '	    rankdir=LR;\r'
+        for e_aceptacion in adp_buscado.estado_aceptacion:
+            cadena += f'	    {e_aceptacion} [shape=doublecircle]\r'
+
+        
+        cadena += '     	node [shape = circle];\r'
+        for transicion in transiciones:
+            entrada = ''
+            salida = ''
+            inserto = ''
+            if transicion.entrada == '$':
+                entrada = 'λ'
+            else:
+                entrada = transicion.entrada
+
+            if transicion.salida == '$':
+                salida = 'λ'
+            else:
+                salida = transicion.salida
+
+            if transicion.inserto == '$':
+                inserto = 'λ'
+            else:
+                inserto = transicion.inserto
+
+            cadena += f'     {transicion.origen} -> {transicion.destino} [label = "{entrada},{salida};{inserto}"];\r'
+
+        # espacio para el cuadro
+        nombre_sin_espacio = (adp_buscado.nombre).strip()
+        cadena += f'     {nombre_sin_espacio} [\r'
+        cadena += f'            fillcolor="#ff880022"\r'
+        cadena += f'            label=<<table border="0" cellborder="1" cellspacing="0" cellpadding="18"> \r'
+        cadena += f'            <tr> <td> <b>Nombre: {adp_buscado.nombre}</b> </td> </tr> \r'
+        cadena += f'            <tr> <td> Alfabeto: {cadena_alfabeto}</td> </tr>\r'
+        cadena += f'            <tr> <td> Alfabeto de pila: {cadena_simbolosP}</td> </tr>\r'
+        cadena += f'            <tr> <td> Estados: {cadena_estados}</td> </tr> \r'
+        cadena += f'            <tr> <td> Estado inicial: {estado_inicial}</td> </tr> \r'
+        cadena += f'            <tr> <td> Estado aceptacion: {cadena_estados_aceptacion}</td> </tr> \r'
+        cadena += f'            <tr> <td align="left"> \r'
+        cadena += f'            <br align="left"/>\r'
+        cadena += f'     Transiciones:<br align="left"/>\r'
+        for t in transiciones:
+            entrada = ''
+            salida = ''
+            inserto = ''
+            if t.entrada == '$':
+                entrada = 'λ'
+            else:
+                entrada = t.entrada
+
+            if t.salida == '$':
+                salida = 'λ'
+            else:
+                salida = t.salida
+
+            if t.inserto == '$':
+                inserto = 'λ'
+            else:
+                inserto = t.inserto
+            cadena += f'     {t.origen},{entrada},{salida};{t.destino},{inserto} <br align="left"/>\r'
+
+        cadena += f'            <br align="left"/>\r'
+        cadena += f'            </td> </tr>\r'
+
+        cadena += f'            </table>> \r'
+        cadena += f'            shape=plain \r'
+        cadena += f']\r'
+
+        cadena += "}"
+
+        file = open(f"InfoAutomatasDePila/grafo_{nombre_sin_espacio}.dot", "w+", encoding="utf-8")
+        file.write(cadena)
+        file.close()
+        os.system(f'dot -Tpdf InfoAutomatasDePila/grafo_{nombre_sin_espacio}.dot -o InfoAutomatasDePila/grafo_{nombre_sin_espacio}.pdf')
+
+        messagebox.showinfo('GENERACION CORRECTA','EL DOCUMENTO SE CREO',detail='SE CREO UN PDF CON EL AFD SELECCIONADO, ESTA EN LA CARPETA InfoAutomatasDePila')
+        open_new_tab(f"InfoAutomatasDePila\grafo_{nombre_sin_espacio}.pdf")    
+
+
+    def validar_ruta(self,nombreADPL:str,cadena:str,tipo):
+        # print(nombreADPL)
+        # print(cadena)
+        adp_buscado = None
+        for ap in self.AutomatasDPL:
+            if ap.nombre == nombreADPL:
+                adp_buscado = ap
+
+        alfabeto = adp_buscado.alfabeto
+        simbolosP = adp_buscado.simbolosP
+        estados = adp_buscado.estados
+        estado_inicial = adp_buscado.estado_inicial
+        estado_aceptacion = adp_buscado.estado_aceptacion
+        transiciones = adp_buscado.transiciones
+
+
+        error = False
+        pila = []
+        caminos = []
+        buscar = []
+        for t in transiciones:
+            if t.origen == estado_inicial:
+                buscar.append(t)
+                if t not in pila:
+                    pila.append(t.inserto)
+                break
+        
+        actual = ''
+        contador_caracteres = 0
+        for w in buscar:
+            for tt in transiciones:
+                if cadena[0] not in simbolosP:
+                    error= True
+                    break
+                elif tt.origen == w.destino and tt.entrada == cadena[0]:
+                    caminos.append(w)
+                    actual = tt.origen
+                    break
+            if error:
+                break
+
+            if actual != '':
+                break
+
+        if error or actual == '':
+            messagebox.showwarning('Error','CADENA INCORRECTA, NO SE CUMPLE CON LA ESTRUCTURA QUE DEBERIA TENER aaa')
+            return False
+
+        
+
+        while contador_caracteres < len(cadena):
+            encontro_caminio = False
+
+            if cadena[contador_caracteres] not in simbolosP:
+                messagebox.showwarning('Error','CARACTER INVALIDO, CADENA INCORRECTA',detail='UN CARACTER NO ESTA EN EL ALFABETO PERMITIDO')
+                return False
+            else:
+                for transicion in transiciones:
+                    if actual == transicion.origen and cadena[contador_caracteres] == transicion.entrada:
+                        if transicion.salida != '$':
+
+                            if transicion.salida == pila[-1]:
+                                pila.pop()
+                            else:
+                                error = True
+                                break
+
+                        if transicion.inserto != '$':
+                            pila.append(transicion.inserto)
+                 
+                        actual = transicion.destino
+                        encontro_caminio = True
+                        caminos.append(transicion)
+                        break
+
+                if error:
+                    messagebox.showwarning('Error','CADENA INCORRECTA, NO SE CUMPLE CON LA ESTRUCTURA QUE DEBERIA TENER bbb')
+                    return False
+
+            if not encontro_caminio:   
+                messagebox.showwarning('Error','CADENA INCORRECTA, NO SE CUMPLE CON LA ESTRUCTURA QUE DEBERIA TENER ccc')
+                return False
+
+            contador_caracteres +=1
+
+        encontro = False
+
+        for ww in transiciones:
+            if actual == ww.origen and ww.destino in estado_aceptacion:
+                if ww.salida == pila[-1]:
+                    encontro = True
+                    caminos.append(ww)
+                    pila.remove(ww.salida)
+                    break
+                else:
+                    messagebox.showwarning('Error','CADENA INCORRECTA, NO SE CUMPLE CON LA ESTRUCTURA QUE DEBERIA TENER ddd')
+                    break
+        
+
+        if encontro and pila == []:
+            if tipo == 1:
+                messagebox.showinfo('CADENA CORRECTA','LA CADENA INTRODUCIDA ES CORRECTA')
+            elif tipo == 2:
+                return caminos
+
+        else:
+            messagebox.showwarning('Error','CADENA INCORRECTA, NO SE CUMPLE CON LA ESTRUCTURA QUE DEBERIA TENER eee')
+

@@ -11,9 +11,9 @@ class ModuloATDP(Frame):
         self.master.resizable(0,0)
         self.master.protocol("WM_DELETE_WINDOW", self.regresar)
 
-        self.btn_mostrar_informacion = Button(self, text="Mostrar Informacion General",cursor='hand2',relief=SOLID,state="disabled")
-        self.btn_validar_cadena= Button(self, text="Validar Cadena",cursor='hand2',relief=SOLID,state="disabled")
-        self.btn_ruta_validacion= Button(self, text="Ruta De Validacion",cursor='hand2',relief=SOLID,state="disabled")
+        self.btn_mostrar_informacion = Button(self, text="Mostrar Informacion General",cursor='hand2',relief=SOLID,state="disabled",command=self.info_adpl)
+        self.btn_validar_cadena= Button(self, text="Validar Cadena",cursor='hand2',relief=SOLID,state="disabled",command=self.validar_cadena)
+        self.btn_ruta_validacion= Button(self, text="Ruta De Validacion",cursor='hand2',relief=SOLID,state="disabled",command=self.validar_ruta)
         self.btn_recorrido_paso_a_paso = Button(self, text="Recorrido Paso A Paso",cursor='hand2',relief=SOLID,state="disabled")
         self.btn_validar_cadena_unaPasada = Button(self, text="Validar Cadena En Una Pasada",cursor='hand2',relief=SOLID,state="disabled")
 
@@ -72,7 +72,7 @@ class ModuloATDP(Frame):
 
 
     def cargar_archivo(self):
-        rutaArchivo = filedialog.askopenfilename(initialdir="/", title="Seleccione un archivo para automas de pila", filetypes=(("afp files", "*.afp"),("all files", "*.*")))
+        rutaArchivo = filedialog.askopenfilename(initialdir="/", title="Seleccione un archivo para automas de pila", filetypes=(("ap files", "*.ap"),("all files", "*.*")))
         if rutaArchivo != '':
             self.gestor.leer_automatasdp(rutaArchivo)
             self.llenar_lista_atms()
@@ -96,6 +96,55 @@ class ModuloATDP(Frame):
             self.btn_recorrido_paso_a_paso["state"] = "normal"
             self.btn_validar_cadena_unaPasada["state"] = "normal"
 
+    
+    def info_adpl(self):
+        self.gestor.informacion_automatadpl(self.combobox_mostrar_atps.get())
+            
+
+    def validar_cadena(self):
+        if self.ingreso_cadena.get() == "":
+            messagebox.showwarning("Advertencia","Debe escribir una cadena")
+        else:
+            self.gestor.validar_ruta(self.combobox_mostrar_atps.get(),self.ingreso_cadena.get(),1)
+
+
+    def validar_ruta(self):
+        if self.ingreso_cadena.get() == "":
+            messagebox.showwarning("Advertencia","Debe escribir una cadena")
+        else:
+            self.text_area_info.config(state='normal')
+            self.text_area_info.delete('1.0',END)
+            self.text_area_info.config(state='disabled')
+            try:
+                caminos = self.gestor.validar_ruta(self.combobox_mostrar_atps.get(),self.ingreso_cadena.get(),2)
+                cadenaCaminos = f'La cadena: {self.ingreso_cadena.get()}\r\nfue reconocida exitosamente:\r\nRuta:\r\n'
+
+                for camino in caminos:
+                    entrada = ''
+                    salida = ''
+                    inserto = ''
+                    if camino.entrada == '$':
+                        entrada = 'λ'
+                    else:
+                        entrada = camino.entrada
+
+                    if camino.salida == '$':
+                        salida = 'λ'
+                    else:
+                        salida = camino.salida
+
+                    if camino.inserto == '$':
+                        inserto = 'λ'
+                    else:
+                        inserto = camino.inserto
+                    cadenaCaminos += f'{camino.origen},{entrada},{salida};{camino.destino},{inserto}\n'
+
+                self.text_area_info.config(state='normal')
+                self.text_area_info.delete('1.0',END)
+                self.text_area_info.insert(INSERT,cadenaCaminos)  
+                self.text_area_info.config(state='disabled')
+            except:
+                pass
 
     def regresar(self):
         self.padre.deiconify()

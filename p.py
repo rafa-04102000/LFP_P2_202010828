@@ -106,16 +106,23 @@
 
 # coordenadas()
 # ventana.mainloop()
-import tkinter as tk
-import random
-def actualizar_etiqueta():
-    numero_aleatorio = random.randint(1, 100)
-    etiqueta1.config(text=f"Número aleatorio: {numero_aleatorio}")
+
+# ----------------------------------
+# import tkinter as tk
+# import random
+# def actualizar_etiqueta():
+#     numero_aleatorio = random.randint(1, 100)
+#     etiqueta1.config(text=f"Número aleatorio: {numero_aleatorio}")
     
-ventana = tk.Tk()
-ventana.title("Ejemplo after() en Tk")
-ventana.config(width=400, height=300)
-etiqueta1 = tk.Label(text="¡Hola mundo!")
-etiqueta1.place(x=100, y=70)
-ventana.after(2000, actualizar_etiqueta)
-ventana.mainloop()
+# ventana = tk.Tk()
+# ventana.title("Ejemplo after() en Tk")
+# ventana.config(width=400, height=300)
+# etiqueta1 = tk.Label(text="¡Hola mundo!")
+# etiqueta1.place(x=100, y=70)
+# ventana.after(2000, actualizar_etiqueta)
+# ventana.mainloop()
+
+
+a = [1,2,3,5]
+
+print(a[-1])
