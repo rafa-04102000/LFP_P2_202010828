@@ -6,6 +6,7 @@ from Clase_Transicion import Transicion
 import os
 from PIL import Image
 from webbrowser import open_new_tab
+import shutil
 # import webbrowser as wb
 
 
@@ -909,6 +910,8 @@ class Gestor:
         pila = []
         caminos = []
         buscar = []
+        pasos = []
+        texto_entrada = ''
         for t in transiciones:
             if t.origen == estado_inicial:
                 buscar.append(t)
@@ -925,6 +928,11 @@ class Gestor:
                     break
                 elif tt.origen == w.destino and tt.entrada == cadena[0]:
                     caminos.append(w)
+                    # cp1 = []
+                    # for c1 in pila:
+                    #     cp1.append(c1)
+                    pasos.append([w,[],''])
+                    print([],'pila primera')
                     actual = tt.origen
                     break
             if error:
@@ -948,20 +956,32 @@ class Gestor:
             else:
                 for transicion in transiciones:
                     if actual == transicion.origen and cadena[contador_caracteres] == transicion.entrada:
+
+                        cp2 = []
+                        for c2 in pila:
+                            cp2.append(c2)
+
+                        print(cp2,'lo que meto')
+
                         if transicion.salida != '$':
 
                             if transicion.salida == pila[-1]:
-                                pila.pop()
+                                pila.pop()                                
                             else:
                                 error = True
                                 break
-
+                        
                         if transicion.inserto != '$':
                             pila.append(transicion.inserto)
+
+                        print(pila,'pila xdd')
                  
                         actual = transicion.destino
                         encontro_caminio = True
                         caminos.append(transicion)
+                        texto_entrada += transicion.entrada
+
+                        pasos.append([transicion,cp2,texto_entrada])
                         break
 
                 if error:
@@ -981,7 +1001,11 @@ class Gestor:
                 if ww.salida == pila[-1]:
                     encontro = True
                     caminos.append(ww)
+                    cp3 = []
+                    for c3 in pila:
+                        cp3.append(c3)
                     pila.remove(ww.salida)
+                    pasos.append([ww,cp3,texto_entrada])
                     break
                 else:
                     messagebox.showwarning('Error','CADENA INCORRECTA, NO SE CUMPLE CON LA ESTRUCTURA QUE DEBERIA TENER ddd')
@@ -993,7 +1017,126 @@ class Gestor:
                 messagebox.showinfo('CADENA CORRECTA','LA CADENA INTRODUCIDA ES CORRECTA')
             elif tipo == 2:
                 return caminos
-
+            elif tipo == 3:
+                cp4 = []
+                for c4 in pila:
+                    cp4.append(c4)
+                ultimoPaso = pasos[-1]
+                transicion_adicional = Transicion(ultimoPaso[0].destino,'$','$','$','$')
+                pasos.append([transicion_adicional,cp4,texto_entrada])
+                self.pasoApaso(pasos,adp_buscado)
         else:
             messagebox.showwarning('Error','CADENA INCORRECTA, NO SE CUMPLE CON LA ESTRUCTURA QUE DEBERIA TENER eee')
 
+    def pasoApaso(self,pasos,adp):
+        CARPETA = f'PasoAPaso/' 
+        
+        if not os.path.exists(CARPETA): #para ver si una carpeta existe
+            os.makedirs(CARPETA) #me crea el archivo si no existe
+        else:
+            # os.rmdir(CARPETA) # la borro si ya existe, por si quiero usar el otro metodo
+            shutil.rmtree(CARPETA) #la borro si ya existe, por si quiero usar el otro metodo, borro toda la carpeta y la vuelvo a crear para viciarla
+            os.makedirs(CARPETA) # la vuelvo a crear vacia
+
+
+        alfabeto = adp.alfabeto
+        simbolosP = adp.simbolosP
+        estados = adp.estados
+        estado_inicial = adp.estado_inicial
+        estado_aceptacion = adp.estado_aceptacion
+        transiciones = adp.transiciones
+
+        for p in pasos:
+            print(f'{p[0].origen},{p[0].entrada},{p[0].salida};{p[0].destino},{p[0].inserto}','transicion')
+            print(p[1],'pila')
+            print(p[2],'cadena')
+        cont = 0
+
+        for paso in pasos:
+
+
+            cadena = 'digraph grafo_afd { \r'
+            cadena += '     fontname="Helvetica,Arial,sans-serif"\r'
+            cadena += '     edge [fontname="Helvetica,Arial,sans-serif"]\r'
+            cadena += '	    rankdir=LR;\r'
+            # for e_aceptacion in estado_aceptacion:
+            #     cadena += f'	    {e_aceptacion} [shape=doublecircle]\r'
+
+            for e in estados:
+                print(paso[0].origen,'este que es puessssss')
+                if e in estado_aceptacion:
+                    print(e,'este es el puñeta estado de aceptacion')
+                    if paso[0].origen == e:
+                        cadena += f'	    {e} [style=filled, fillcolor=yellow shape=doublecircle]\r'
+                    else:
+                        cadena += f'	    {e} [shape=doublecircle]\r'
+                else:
+                    print(e,'este solo es une estado')
+                    if paso[0].origen == e:
+                        cadena += f'	    {e} [style=filled, fillcolor=yellow shape = circle]\r'
+                    else:
+                        cadena += f'	    {e} [shape = circle]\r'
+      
+            print('---------------------------------------------------')
+            for transicion in transiciones:
+                entrada = ''
+                salida = ''
+                inserto = ''
+                if transicion.entrada == '$':
+                    entrada = 'λ'
+                else:
+                    entrada = transicion.entrada
+
+                if transicion.salida == '$':
+                    salida = 'λ'
+                else:
+                    salida = transicion.salida
+
+                if transicion.inserto == '$':
+                    inserto = 'λ'
+                else:
+                    inserto = transicion.inserto
+
+                if transicion == paso[0]:
+                    cadena += f'     {transicion.origen} -> {transicion.destino} [fontcolor="red" label = "{entrada},{salida};{inserto}"];\r'
+                else:
+                    cadena += f'     {transicion.origen} -> {transicion.destino} [label = "{entrada},{salida};{inserto}"];\r'
+
+            # espacio para el cuadro
+            nombre_sin_espacio = (adp.nombre).strip()
+            cadena += f'     {nombre_sin_espacio} [\r'
+            cadena += f'            fillcolor="#ff880022"\r'
+            cadena += f'            label=<<table border="0" cellborder="1" cellspacing="0" cellpadding="18"> \r'
+            cadena_pila = ''
+            for c in paso[1]:
+                cadena_pila += c
+
+            if cadena_pila == '':
+                cadena += f'            <tr> <td> Pila: {cadena_pila} </td> </tr> \r'
+            else:
+                cadena += f'            <tr> <td> Pila: <b>{cadena_pila}</b> </td> </tr> \r'
+
+            if paso[2] == '':
+                cadena += f'            <tr> <td> Entrada: {paso[2]}</td> </tr>\r'
+            else:
+                cadena += f'            <tr> <td> Entrada: <b>{paso[2]}</b></td> </tr>\r'
+
+            cadena += f'            </table>> \r'
+            cadena += f'            shape=plain \r'
+            cadena += f']\r'
+
+            cadena += "}"
+
+            file = open(f"PasoAPaso/paso_{nombre_sin_espacio}{cont}.dot", "w+", encoding="utf-8")
+            file.write(cadena)
+            file.close()
+            os.system(f'dot -Tpng PasoAPaso/paso_{nombre_sin_espacio}{cont}.dot -o PasoAPaso/paso_{nombre_sin_espacio}{cont}.png')
+
+
+            # os.system(f'dot -Tpng ArbolDeDerivacion/arbol_{nombre_sin_espacio}.dot -o ArbolDeDerivacion/arbol_{nombre_sin_espacio}.png')
+
+            # messagebox.showinfo('SE CREO LA IMAGEN','LA IMAGEN SE GUARDO EN LA CARPETA ArbolDeDerivacion')
+            # img = Image.open(f'ArbolDeDerivacion/arbol_{nombre_sin_espacio}.png')
+            # img.show()
+
+            cont +=1
