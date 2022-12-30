@@ -15,7 +15,7 @@ class ModuloATDP(Frame):
         self.btn_validar_cadena= Button(self, text="Validar Cadena",cursor='hand2',relief=SOLID,state="disabled",command=self.validar_cadena)
         self.btn_ruta_validacion= Button(self, text="Ruta De Validacion",cursor='hand2',relief=SOLID,state="disabled",command=self.validar_ruta)
         self.btn_recorrido_paso_a_paso = Button(self, text="Recorrido Paso A Paso",cursor='hand2',relief=SOLID,state="disabled",command=self.pasoApaso)
-        self.btn_validar_cadena_unaPasada = Button(self, text="Validar Cadena En Una Pasada",cursor='hand2',relief=SOLID,state="disabled")
+        self.btn_validar_cadena_unaPasada = Button(self, text="Validar Cadena En Una Pasada",cursor='hand2',relief=SOLID,state="disabled",command=self.validar_cadena_en_una_pasada)
 
 
         self.text_area_info = Text()
@@ -152,6 +152,11 @@ class ModuloATDP(Frame):
         else:
             self.gestor.validar_ruta(self.combobox_mostrar_atps.get(),self.ingreso_cadena.get(),3)
 
+    def validar_cadena_en_una_pasada(self):
+        if self.ingreso_cadena.get() == "":
+            messagebox.showwarning("Advertencia","Debe escribir una cadena")
+        else:
+            self.gestor.validar_ruta(self.combobox_mostrar_atps.get(),self.ingreso_cadena.get(),4)
 
     def regresar(self):
         self.padre.deiconify()

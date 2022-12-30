@@ -134,6 +134,7 @@ class Inicio(Frame):
 CARPETA1 = f'ArbolDeDerivacion/' 
 CARPETA2 = f'InfoAutomatasDePila/' 
 CARPETA3 = f'PasoAPaso/' 
+CARPETA4 = f'ValidarCadenaEnUnaPasada/' 
 
 if not os.path.exists(CARPETA1): #para ver si una carpeta existe
     os.makedirs(CARPETA1) #me crea el archivo si no existe
@@ -144,6 +145,9 @@ if not os.path.exists(CARPETA2): #para ver si una carpeta existe
 
 if not os.path.exists(CARPETA3): #para ver si una carpeta existe
     os.makedirs(CARPETA3) #me crea el archivo si no existe
+
+if not os.path.exists(CARPETA4): #para ver si una carpeta existe
+    os.makedirs(CARPETA4) #me crea el archivo si no existe
 
 root = Tk()
 root.wm_title("Pantalla Inicial")

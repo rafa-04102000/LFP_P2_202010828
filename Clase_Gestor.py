@@ -1024,6 +1024,15 @@ class Gestor:
                 transicion_adicional = Transicion(ultimoPaso[0].destino,'$','$','$','$')
                 pasos.append([transicion_adicional,cp4,texto_entrada])
                 self.pasoApaso(pasos,adp_buscado)
+
+            elif tipo == 4:
+                cp5 = []
+                for c5 in pila:
+                    cp5.append(c5)
+                ultimoPaso = pasos[-1]
+                transicion_adicional = Transicion(ultimoPaso[0].destino,'$','$','$','$')
+                pasos.append([transicion_adicional,cp5,texto_entrada])
+                self.validar_cadena_en_una_pasada(pasos,adp_buscado)                
         else:
             messagebox.showwarning('Error','CADENA INCORRECTA, NO SE CUMPLE CON LA ESTRUCTURA QUE DEBERIA TENER eee')
 
@@ -1134,3 +1143,94 @@ class Gestor:
             messagebox.showinfo('Paso A Paso','Continuar')
 
             cont +=1
+
+
+    def validar_cadena_en_una_pasada(self,pasos,adp):
+        nombre = adp.nombre
+        # alfabeto = adp.alfabeto
+        # simbolosP = adp.simbolosP
+        # estados = adp.estados
+        # estado_inicial = adp.estado_inicial
+        # estado_aceptacion = adp.estado_aceptacion
+        # transiciones = adp.transiciones
+
+
+   
+
+
+        cadena = 'digraph G {style="filled" \r'
+        cadena += '     node[shape=box  style= filled] \r'
+        cadena += '     subgraph cluster1 { style="filled" \r'
+        cadena += f'	    label = "{nombre}" \r'
+        cadena += '	    bgcolor = "#DF950B"\r'
+        cadena += '	    a0 [label=< \r'
+        cadena += '	    <TABLE border="10" cellspacing="10" cellpadding="10" style="rounded" > \r'
+
+        cadena += '	    <TR>  \r'
+        cadena += '	    <TD border="3"  >Iteración</TD>  \r'
+        cadena += '	    <TD border="3"  >Pila</TD>  \r'
+        cadena += '	    <TD border="3"  >Entrada</TD>  \r'
+        cadena += '	    <TD border="3"  >Transición</TD>  \r'
+        cadena += '	    </TR> \r'
+
+
+        
+        cont = 0
+        for paso in pasos:
+
+            cadena += '<TR>  \r'
+            cadena += f'<TD border="3" > {cont}</TD> \r'
+            cadena_pila = ''
+            for c in paso[1]:
+                cadena_pila += c
+
+            cadena += f'<TD border="3" > {cadena_pila}</TD> \r'
+            cadena += f'<TD border="3" > {paso[2]}</TD> \r'
+
+            cadena_transicion = ''
+            entrada = ''
+            salida = ''
+            inserto = ''
+            if paso[0].entrada == '$':
+                entrada = 'λ'
+            else:
+                entrada = paso[0].entrada
+
+            if paso[0].salida == '$':
+                salida = 'λ'
+            else:
+                salida = paso[0].salida
+
+            if paso[0].inserto == '$':
+                inserto = 'λ'
+            else:
+                inserto = paso[0].inserto
+
+
+            cadena_transicion = f'{paso[0].origen},{entrada},{salida};{paso[0].destino},{inserto}'
+     
+            if cont+1 == len(pasos):
+                cadena += f'<TD border="3" > </TD> \r'
+            else:
+                cadena += f'<TD border="3" > {cadena_transicion}</TD> \r'
+
+            cadena += '	    </TR> \r'
+
+
+            cont +=1
+
+
+        nombre_sin_espacio = (adp.nombre).strip()
+        cadena += "</TABLE>>]; \r"
+        cadena += "}\r"
+        cadena += "}"
+
+        file = open(f"ValidarCadenaEnUnaPasada/pasada_{nombre_sin_espacio}.dot", "w+", encoding="utf-8")
+        file.write(cadena)
+        file.close()
+        os.system(f'dot -Tpdf ValidarCadenaEnUnaPasada/pasada_{nombre_sin_espacio}.dot -o ValidarCadenaEnUnaPasada/pasada_{nombre_sin_espacio}.pdf')
+
+        messagebox.showinfo('Validar Cadena En Una Pasada','Se creo el documento pdf, se guardara en la carpeta ValidarCadenaEnUnaPasada')
+        open_new_tab(f"ValidarCadenaEnUnaPasada\pasada_{nombre_sin_espacio}.pdf")    
+
+
