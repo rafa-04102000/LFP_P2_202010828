@@ -4,6 +4,7 @@ import time
 import random
 from Clase_Gestor import Gestor
 from Pantalla_Menu import Menu
+import os
 
 class Inicio(Frame):
     def __init__(self, master) -> None:
@@ -128,6 +129,21 @@ class Inicio(Frame):
         #     root = Toplevel()
         #     Menu(self.gestor,master=root,padre=self.master)
 
+
+
+CARPETA1 = f'ArbolDeDerivacion/' 
+CARPETA2 = f'InfoAutomatasDePila/' 
+CARPETA3 = f'PasoAPaso/' 
+
+if not os.path.exists(CARPETA1): #para ver si una carpeta existe
+    os.makedirs(CARPETA1) #me crea el archivo si no existe
+
+
+if not os.path.exists(CARPETA2): #para ver si una carpeta existe
+    os.makedirs(CARPETA2) #me crea el archivo si no existe
+
+if not os.path.exists(CARPETA3): #para ver si una carpeta existe
+    os.makedirs(CARPETA3) #me crea el archivo si no existe
 
 root = Tk()
 root.wm_title("Pantalla Inicial")

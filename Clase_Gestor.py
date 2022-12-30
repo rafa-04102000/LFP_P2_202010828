@@ -932,7 +932,6 @@ class Gestor:
                     # for c1 in pila:
                     #     cp1.append(c1)
                     pasos.append([w,[],''])
-                    print([],'pila primera')
                     actual = tt.origen
                     break
             if error:
@@ -961,7 +960,7 @@ class Gestor:
                         for c2 in pila:
                             cp2.append(c2)
 
-                        print(cp2,'lo que meto')
+         
 
                         if transicion.salida != '$':
 
@@ -974,7 +973,7 @@ class Gestor:
                         if transicion.inserto != '$':
                             pila.append(transicion.inserto)
 
-                        print(pila,'pila xdd')
+                    
                  
                         actual = transicion.destino
                         encontro_caminio = True
@@ -1046,10 +1045,11 @@ class Gestor:
         estado_aceptacion = adp.estado_aceptacion
         transiciones = adp.transiciones
 
-        for p in pasos:
-            print(f'{p[0].origen},{p[0].entrada},{p[0].salida};{p[0].destino},{p[0].inserto}','transicion')
-            print(p[1],'pila')
-            print(p[2],'cadena')
+        # for p in pasos:
+        #     print(f'{p[0].origen},{p[0].entrada},{p[0].salida};{p[0].destino},{p[0].inserto}','transicion')
+        #     print(p[1],'pila')
+        #     print(p[2],'cadena')
+        
         cont = 0
 
         for paso in pasos:
@@ -1063,21 +1063,18 @@ class Gestor:
             #     cadena += f'	    {e_aceptacion} [shape=doublecircle]\r'
 
             for e in estados:
-                print(paso[0].origen,'este que es puessssss')
                 if e in estado_aceptacion:
-                    print(e,'este es el puñeta estado de aceptacion')
                     if paso[0].origen == e:
                         cadena += f'	    {e} [style=filled, fillcolor=yellow shape=doublecircle]\r'
                     else:
                         cadena += f'	    {e} [shape=doublecircle]\r'
                 else:
-                    print(e,'este solo es une estado')
+
                     if paso[0].origen == e:
                         cadena += f'	    {e} [style=filled, fillcolor=yellow shape = circle]\r'
                     else:
                         cadena += f'	    {e} [shape = circle]\r'
-      
-            print('---------------------------------------------------')
+
             for transicion in transiciones:
                 entrada = ''
                 salida = ''
@@ -1132,11 +1129,8 @@ class Gestor:
             file.close()
             os.system(f'dot -Tpng PasoAPaso/paso_{nombre_sin_espacio}{cont}.dot -o PasoAPaso/paso_{nombre_sin_espacio}{cont}.png')
 
-
-            # os.system(f'dot -Tpng ArbolDeDerivacion/arbol_{nombre_sin_espacio}.dot -o ArbolDeDerivacion/arbol_{nombre_sin_espacio}.png')
-
-            # messagebox.showinfo('SE CREO LA IMAGEN','LA IMAGEN SE GUARDO EN LA CARPETA ArbolDeDerivacion')
-            # img = Image.open(f'ArbolDeDerivacion/arbol_{nombre_sin_espacio}.png')
-            # img.show()
+            img = Image.open(f'PasoAPaso/paso_{nombre_sin_espacio}{cont}.png')
+            img.show()
+            messagebox.showinfo('Paso A Paso','Continuar')
 
             cont +=1
