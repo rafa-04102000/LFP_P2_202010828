@@ -115,19 +115,19 @@ class Inicio(Frame):
 
 
     def descontar(self):
-        root = Toplevel()
-        Menu(self.gestor,master=root,padre=self.master)
-        # if self.cont != 0:
-        #     print(self.cont)
-        #     self.cont -=1
-        #     color = self.colores[random.randint(0,len(self.colores))]
-        #     self.canvas1.itemconfig(self.circulo1, outline=color)
-        #     self.canvas1.itemconfig(self.texto1,font=('Arial',55,'bold'),text=self.cont)
-        #     self.master.after(1000, self.descontar)
-        # else:
-        #     print('terminnaron los 5 segundos, se pasara a el modulo del menu')
-        #     root = Toplevel()
-        #     Menu(self.gestor,master=root,padre=self.master)
+        # root = Toplevel()
+        # Menu(self.gestor,master=root,padre=self.master)
+        if self.cont != 0:
+            print(self.cont)
+            self.cont -=1
+            color = self.colores[random.randint(0,len(self.colores))]
+            self.canvas1.itemconfig(self.circulo1, outline=color)
+            self.canvas1.itemconfig(self.texto1,font=('Arial',55,'bold'),text=self.cont)
+            self.master.after(1000, self.descontar)
+        else:
+            print('terminnaron los 5 segundos, se pasara a el modulo del menu')
+            root = Toplevel()
+            Menu(self.gestor,master=root,padre=self.master)
 
 
 
